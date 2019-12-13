@@ -26,7 +26,7 @@ public class HostController {
       }
 
       public void slotsSliderListener(Event e) {
-             lbl_slots.setText(""+sld_slots.getValue());
+             lbl_slots.setText(""+Math.round(sld_slots.getValue()));
       }
 
       private void showSubmitAlert() {
