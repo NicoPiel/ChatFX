@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nicolos.LoginController">
+   <children>
+      <TextField fx:id="txt_username" layoutX="326.0" layoutY="243.0" promptText="Benutzername" />
+      <PasswordField fx:id="pwb_password" layoutX="326.0" layoutY="275.0" promptText="Passwort" />
+      <Button fx:id="btn_login" layoutX="377.0" layoutY="325.0" mnemonicParsing="false" onAction="#clickedOnLogin" text="Login" />
+      <Button fx:id="btn_register" layoutX="361.0" layoutY="367.0" mnemonicParsing="false" onAction="#clickedOnRegister" text="Registrieren" />
+      <Label layoutX="250.0" layoutY="68.0" prefHeight="148.0" prefWidth="305.0" text="ChatFX">
+         <font>
+            <Font size="96.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

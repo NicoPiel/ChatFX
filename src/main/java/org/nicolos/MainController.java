@@ -11,6 +11,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.nicolos.client.Client;
+import org.nicolos.utils.Encrypter;
 
 import java.io.IOException;
 
@@ -25,11 +27,25 @@ public class MainController {
       private AnchorPane APMain;
       @FXML
       private Button btn_test;
+      @FXML
+      private Label lbl_test;
+      @FXML
+      private Label lbl_test1;
 
-      public void joinStuff(ActionEvent e){
-            if (txt_pw.getText() == null || txt_pw.getText().trim().isEmpty()) {
-                  this.showPasswordAlert();
+      public void clickedOnLogin(){
+            if (txt_ip.getText() == null || txt_ip.getText().trim().isEmpty()) {
+                  showHostAlert();
+            }else{
+                  Client c = new Client(txt_ip.getText());
             }
+
+            Encrypter e = new Encrypter();
+            if (txt_pw.getText() == null || txt_pw.getText().trim().isEmpty()) {
+                  showPasswordAlert();
+            }else{
+
+            }
+
       }
 
       public void hostStuff(ActionEvent e) throws IOException {

@@ -10,24 +10,27 @@ public class Client {
       static final int port = 45126;
       Socket clientSocket;
 
-      public Client() {
+      public Client(String IP) {
             try {
-                  clientSocket = new Socket("localhost", port);
-                  System.out.println(TestConnection());
+                  clientSocket = new Socket(IP, port);
+                  System.out.println(TestConnection(IP));
             }
             catch (IOException e) {
                   e.printStackTrace();
             }
       }
 
-      public boolean TestConnection() {
+      public boolean TestConnection(String IPToTest) {
             Socket server = null;
 
             try {
-                  server = new Socket("localhost", port);
-                  Scanner in  = new Scanner(server.getInputStream());
+                  server = new Socket(IPToTest, port);
+                  Scanner in  = new Scanner(clientSocket.getInputStream());
 
                   System.out.println(in.nextLine());
+                  System.out.println("Done, thank you for your patience.");
+
+                  return true;
             }
             catch (UnknownHostException e) {
                   System.out.println("Couldn't determine the host.");
