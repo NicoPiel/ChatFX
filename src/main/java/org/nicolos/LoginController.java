@@ -2,7 +2,9 @@ package org.nicolos;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -33,12 +35,18 @@ public class LoginController {
                   String salt = sql.getSalt(txt_username.getText());
                   System.out.println("Login try");
                   if (ex.checkPassword(pwb_password.getText(), salt, Encryptedpassword)) {
+
                         System.out.println("Login accepted");
                         try{
-                              App app = new App();
-                              Scene sc = new Scene(app.loadFXML("main"));
+                              FXMLLoader fxmlLoader = new FXMLLoader();
+                              fxmlLoader.setLocation(getClass().getResource("main.fxml"));
+                              Parent switchscene = fxmlLoader.load();
+                              Scene sc = new Scene(switchscene);
+                              MainController maincontroller = fxmlLoader.getController();
+                              maincontroller.Init(sql.getUid(txt_username.getText()), txt_username.getText());
                               Stage stageTheEventSourceNodeBelongs = (Stage) ((Node)e.getSource()).getScene().getWindow();
                               stageTheEventSourceNodeBelongs.setScene(sc);
+
                         }catch(IOException io){
                               io.printStackTrace();
                         }

@@ -18,5 +18,7 @@
          </font>
       </Label>
       <Button fx:id="btn_test" layoutX="373.0" layoutY="514.0" mnemonicParsing="false" text="Test" visible="false" />
+      <Label fx:id="logedInID" layoutX="81.0" layoutY="568.0" text="Label" />
+      <Label fx:id="logedInUser" layoutX="14.0" layoutY="568.0" prefHeight="18.0" prefWidth="83.0" text="Label" />
    </children>
 </AnchorPane>

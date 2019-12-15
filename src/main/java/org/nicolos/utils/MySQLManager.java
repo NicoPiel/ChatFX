@@ -91,6 +91,22 @@ public class MySQLManager {
             return null;
 
       }
+      public int getUid(String username) {
+            String sql = "Select id FROM userlogin WHERE username= '"+username+"';";
+
+            try {
+                  PreparedStatement stmt = this.getConnect().prepareStatement(sql);
+                  ResultSet result = stmt.executeQuery();
+                  if (result.next()) {
+                        return result.getInt("id");
+                  }
+            }catch(SQLException e) {
+                  e.printStackTrace();
+            }
+            return 0;
+
+      }
+
       public String getSalt(String username) {
             String sql = "Select salt1 FROM userlogin WHERE username= '"+username+"';";
 

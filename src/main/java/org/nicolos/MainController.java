@@ -3,6 +3,7 @@ package org.nicolos;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import org.nicolos.client.Client;
@@ -16,6 +17,23 @@ public class MainController {
       private TextField txt_ip;
       @FXML
       private TextField txt_pw;
+      @FXML
+      private Label logedInUser;
+      @FXML
+      private Label logedInID;
+
+      private String username;
+      private int uid;
+
+
+      public void Init(int _uid, String _username) {
+            this.username = _username;
+            this.uid = _uid;
+
+            this.logedInID.setText(Integer.toString(this.uid));
+            this.logedInUser.setText(this.username);
+
+      }
 
       public void clickedOnLogin(){
             if (txt_ip.getText() == null || txt_ip.getText().trim().isEmpty()) {
