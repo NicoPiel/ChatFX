@@ -42,13 +42,16 @@ public class MainController {
 
       }
 
-      public void clickedOnLogin(ActionEvent e){
+      public void clickedOnJoin(ActionEvent e){
+            System.out.println("Clicked on Join");
             if (txt_ip.getText() == null || txt_ip.getText().trim().isEmpty()) {
                   showHostAlert();
             }else{
+                  System.out.println("Ip not null");
                   Client c = new Client(txt_ip.getText());
-
+                  System.out.println(c.HasSocket());
                   if(c.HasSocket()) {
+                        System.out.println("Socket not null");
                         try {
                               FXMLLoader fxmlLoader = new FXMLLoader();
                               fxmlLoader.setLocation(getClass().getResource("chatclient.fxml"));

@@ -41,7 +41,6 @@ public class RegisterController {
                   return;
             }
 
-
             MySQLManager sql = new MySQLManager();
 
             if(!sql.isUsernameAvailable(txt_username.getText())) {
@@ -53,6 +52,7 @@ public class RegisterController {
                   this.showEmailNotAvailableAlert();
                   return;
             }
+
             Encrypter en = new Encrypter();
             String password[] = en.encryptPassword(pwb_password.getText());
             String Encryptedpassword = password[0];

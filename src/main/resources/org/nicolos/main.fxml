@@ -9,7 +9,7 @@
 
 <AnchorPane fx:id="APMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nicolos.MainController">
    <children>
-      <Button fx:id="btn_join" layoutX="375.0" layoutY="371.0" mnemonicParsing="false" onAction="#clickedOnLogin" text="Join" />
+      <Button fx:id="btn_join" layoutX="375.0" layoutY="371.0" mnemonicParsing="false" onAction="#clickedOnJoin" text="Join" />
       <TextField fx:id="txt_ip" layoutX="324.0" layoutY="287.0" promptText="IP:" />
       <PasswordField fx:id="txt_pw" layoutX="324.0" layoutY="329.0" promptText="Password" />
       <Label layoutX="249.0" layoutY="78.0" prefHeight="171.0" prefWidth="306.0" text="ChatFX">

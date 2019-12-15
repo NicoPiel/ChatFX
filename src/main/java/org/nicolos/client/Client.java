@@ -4,103 +4,131 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Client {
       static final int port = 45126;
       String ipToConnectTo;
-      Socket clientSocket;
+      boolean connected;
+
+      Socket socket;
 
       public Client(String ip) {
-            try {
-                  clientSocket = new Socket(ip, port);
-            }
-            catch (IOException e) {
-                  e.printStackTrace();
-            }
+            this.ipToConnectTo = ip;
+
+            this.socket = RequestConnection("Client requesting connection..");
+
+            connected = true;
       }
 
-      public boolean WriteToServer(Socket server) {
-            try {
-                  Scanner in = new Scanner(server.getInputStream());
-                  Scanner in_local = new Scanner(System.in);
-                  PrintWriter out = new PrintWriter(server.getOutputStream());
+      boolean PokeServer (Socket server) {
+            /*if (connected) {
+                  try {
+                        Scanner in = new Scanner(server.getInputStream());
+                        PrintWriter out = new PrintWriter(server.getOutputStream(), true);
 
-                  System.out.println(in.nextLine());
+                        out.println("/#req#/");
 
-                  String input = in_local.nextLine();
+                        if (in.hasNext()) {
 
-                  switch (input) {
-                        case "quit":
-                              return false;
-                        default:
-                              out.println(input);
-                              break;
+                        }
                   }
-
-                  return true;
+                  catch (IOException e) {
+                        System.err.println("Couldn't write to server's output stream.");
+                        e.printStackTrace();
+                  }
             }
-            catch (IOException e) {
-                  e.printStackTrace();
+            else {
+                  System.err.println("Couldn't poke the server.");
                   return false;
             }
+            return false;*/
+
+            return false;
       }
 
-      public Socket RequestConnection() {
-            Socket server = null;
+      public Socket RequestConnection(String message) {
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss z 'on' dd.MM.yyyy");
+            this.socket = null;
+
+            System.out.println(Thread.currentThread().getName() + ": Requesting connection..");
 
             try {
-                  server = new Socket(this.ipToConnectTo, port);
-                  Scanner in  = new Scanner(clientSocket.getInputStream());
+                  this.socket = new Socket(this.ipToConnectTo, port);
+                  Scanner in = new Scanner(this.socket.getInputStream());
+                  PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
 
-                  System.out.println(in.nextLine());
+                  String output = String.format("<%s> %s", dateFormat.format(Date.from(Instant.now())), message);
 
-                  boolean readyToWrite = WriteToServer(server);
+                  out.println(output);
 
-                  while(readyToWrite) {
-                        readyToWrite = WriteToServer(server);
-                  }
-            }
-            catch (UnknownHostException e) {
-                  System.out.println("Couldn't determine the host.");
+                  System.out.println(output);
+            } catch (UnknownHostException e) {
+                  System.err.println("Couldn't determine the host.");
                   e.printStackTrace();
-            }
-            catch (IOException e) {
-                  System.out.println("Couldn't initialize the socket.");
+                  return null;
+            } catch (IOException e) {
+                  System.err.println("Couldn't initialize the socket.");
                   e.printStackTrace();
-            }
-            finally {
-                  if (server != null) {
-                        try {
-                              server.close();
-                        }
-                        catch (IOException e) {
-                              e.printStackTrace();
-                        }
-                  }
+                  return null;
+            } finally {
+                  TerminateConnection(this.socket);
             }
 
-            return server;
-
+            return socket;
       }
-
-      boolean TerminateConnection (Socket server) {
+      public boolean TerminateConnection (Socket socket) {
             try {
-                  if (server != null) {
-                        server.close();
-                        System.out.println("Connection has been closed.");
+                  if (socket != null) {
+                        this.socket.close();
+                        System.out.println("Closed the client's connection..");
+                        return true;
                   }
-
-                  return true;
+                  else {
+                        System.err.println("There was no socket to close.");
+                        return false;
+                  }
             }
             catch (IOException e) {
-                  System.out.println("Socket couldn't be closed.");
                   e.printStackTrace();
             }
 
             return false;
       }
+
+      public boolean TerminateConnectionManually (Socket socket) {
+            try {
+                  if (socket != null) {
+                        this.socket.close();
+                        System.out.println("Closed the client's connection..");
+                        connected = true;
+                        return true;
+                  }
+                  else {
+                        System.err.println("There was no socket to close.");
+                        connected = false;
+                        return false;
+                  }
+            }
+            catch (IOException e) {
+                  e.printStackTrace();
+            }
+
+            return false;
+      }
+
+      public boolean IsConnected() {
+            return connected;
+      }
+
+      public Socket GetSocket () {
+            return this.socket;
+      }
       public boolean HasSocket () {
-            return clientSocket != null;
+            return this.socket != null;
       }
 }
