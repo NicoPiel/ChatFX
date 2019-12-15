@@ -5,12 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.nicolos.utils.Encrypter;
 import org.nicolos.utils.MySQLManager;
+import java.util.regex.Pattern;
 
 
 import java.io.IOException;
@@ -24,8 +24,6 @@ public class RegisterController {
       private PasswordField pwb_password;
       @FXML
       private PasswordField pwb_verify_password;
-      @FXML
-      private Label lbl_test;
 
       public void clickedOnRegister(ActionEvent e)  {
             System.out.println("Shit");
@@ -38,7 +36,7 @@ public class RegisterController {
                   showPasswordsDontMatchAlert();
                   return;
             }
-            if(!this.checkIfValidEmail()) {
+            if(!this.checkIfValidEmail(txt_mail.getText())) {
                   this.showFalseEmailAlert();
                   return;
             }
@@ -72,26 +70,30 @@ public class RegisterController {
                   ex.printStackTrace();
             }
 
-
-
-
-
-
+      }
+      public void clickedOnBackToLogin(ActionEvent e){
+            try{
+                  App app = new App ();
+                  Scene sc = new Scene(app.loadFXML("login"));
+                  Stage stageTheEventSourceNodeBelongs = (Stage) ((Node)e.getSource()).getScene().getWindow();
+                  stageTheEventSourceNodeBelongs.setScene(sc);
+            }catch(IOException ex) {
+                  ex.printStackTrace();
+            }
 
       }
-      public void clickedOnBackToLogin(){
+      private boolean checkIfValidEmail(String email) {
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                    "[a-zA-Z0-9_+&*-]+)*@" +
+                    "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                    "A-Z]{2,7}$";
+
+            Pattern pat = Pattern.compile(emailRegex);
+            if (email == null)
+                  return false;
+            return pat.matcher(email).matches();
 
       }
-
-      private boolean checkIfValidEmail() {
-            return true;
-      }
-
-
-
-
-
-
 
 
       private boolean checkAllSet() {

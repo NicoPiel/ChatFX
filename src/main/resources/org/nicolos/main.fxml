@@ -9,7 +9,6 @@
 
 <AnchorPane fx:id="APMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nicolos.MainController">
    <children>
-      <Button fx:id="btn_host" layoutX="364.0" layoutY="416.0" mnemonicParsing="false" onAction="#hostStuff" text="Host Chat" />
       <Button fx:id="btn_join" layoutX="375.0" layoutY="371.0" mnemonicParsing="false" onAction="#clickedOnLogin" text="Join" />
       <TextField fx:id="txt_ip" layoutX="324.0" layoutY="287.0" promptText="IP:" />
       <PasswordField fx:id="txt_pw" layoutX="324.0" layoutY="329.0" promptText="Password" />
@@ -19,7 +18,5 @@
          </font>
       </Label>
       <Button fx:id="btn_test" layoutX="373.0" layoutY="514.0" mnemonicParsing="false" text="Test" visible="false" />
-      <Label fx:id="lbl_test" layoutX="476.0" layoutY="378.0" prefHeight="18.0" prefWidth="201.0" text="Label" />
-      <Label fx:id="lbl_test1" layoutX="476.0" layoutY="407.0" prefHeight="18.0" prefWidth="219.0" text="Label" />
    </children>
 </AnchorPane>

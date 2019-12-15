@@ -20,6 +20,5 @@
       <TextField fx:id="txt_mail" layoutX="326.0" layoutY="322.0" promptText="E-Mail" />
       <Button fx:id="btn_backtologin" layoutX="347.0" layoutY="517.0" mnemonicParsing="false" onAction="#clickedOnBackToLogin" text="Zurück zum Login" />
       <Button fx:id="btn_register" layoutX="363.0" layoutY="369.0" mnemonicParsing="false" onAction="#clickedOnRegister" text="Registrieren" />
-      <Label fx:id="lbl_test" layoutX="46.0" layoutY="51.0" prefHeight="17.0" prefWidth="337.0" text="Label" />
     </children>
 </AnchorPane>

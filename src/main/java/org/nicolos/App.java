@@ -24,7 +24,7 @@ public class App extends Application {
         this.setupStage();
     }
 
-    private void setupStage() throws IOException {
+    private void setupStage() {
         this.stage.setScene(this.scene);
         this.stage.getIcons().add(new Image("file:Assets/icon16.png"));
         this.stage.show();

@@ -36,7 +36,7 @@ public class LoginController {
                         System.out.println("Login accepted");
                         try{
                               App app = new App();
-                              Scene sc = new Scene(app.loadFXML("chatclient"));
+                              Scene sc = new Scene(app.loadFXML("main"));
                               Stage stageTheEventSourceNodeBelongs = (Stage) ((Node)e.getSource()).getScene().getWindow();
                               stageTheEventSourceNodeBelongs.setScene(sc);
                         }catch(IOException io){
