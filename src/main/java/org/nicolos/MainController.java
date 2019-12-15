@@ -1,14 +1,21 @@
 package org.nicolos;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import javafx.stage.Stage;
 import org.nicolos.client.Client;
 import org.nicolos.utils.Encrypter;
 
+import java.io.IOException;
 
 
 public class MainController {
@@ -35,20 +42,27 @@ public class MainController {
 
       }
 
-      public void clickedOnLogin(){
+      public void clickedOnLogin(ActionEvent e){
             if (txt_ip.getText() == null || txt_ip.getText().trim().isEmpty()) {
                   showHostAlert();
             }else{
                   Client c = new Client(txt_ip.getText());
+
+                  if(c.HasSocket()) {
+                        try {
+                              FXMLLoader fxmlLoader = new FXMLLoader();
+                              fxmlLoader.setLocation(getClass().getResource("chatclient.fxml"));
+                              Parent switchscene = fxmlLoader.load();
+                              Scene sc = new Scene(switchscene);
+                              ChatController cc = fxmlLoader.getController();
+                              cc.Init(username,uid, c);
+                              Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) e.getSource()).getScene().getWindow();
+                              stageTheEventSourceNodeBelongs.setScene(sc);
+                        }catch(IOException ex){
+                              ex.printStackTrace();
+                        }
+                  }
             }
-
-            Encrypter e = new Encrypter();
-            if (txt_pw.getText() == null || txt_pw.getText().trim().isEmpty()) {
-                  showPasswordAlert();
-            }else{
-
-            }
-
       }
 
 
