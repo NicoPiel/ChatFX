@@ -20,7 +20,6 @@ public class App extends Application {
     public void start(Stage primarystage) throws IOException {
         this.stage = primarystage;
         this.scene = new Scene(loadFXML("login"));
-
         this.setupStage();
     }
 

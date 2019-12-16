@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Client {
       static final int port = 45126;
@@ -23,32 +25,22 @@ public class Client {
 
       ArrayList<String> fullChat;
 
-      ExecutorService executor;
+      ScheduledExecutorService executor;
       Socket socket;
 
       public Client(String ip) {
-            executor = Executors.newCachedThreadPool();
+            executor = Executors.newSingleThreadScheduledExecutor();
 
             this.ipToConnectTo = ip;
             fullChat = new ArrayList<>();
 
             this.socket = EstablishConnection();
 
-            executor.execute(() -> {
-                  while (connected) {
-                        connected = PokeServer();
-
-                        try {
-                              Thread.sleep(checkInterval);
-                        } catch (InterruptedException e) {
-                              e.printStackTrace();
-                        }
-                  }
-            });
+            executor.scheduleWithFixedDelay(() -> connected = PokeServer(), 0, 450, TimeUnit.MILLISECONDS);
 
       }
 
-      boolean PokeServer() {
+      synchronized boolean PokeServer() {
             this.socket = null;
 
             try {
@@ -142,7 +134,7 @@ public class Client {
                   e.printStackTrace();
             } catch (IOException e) {
                   System.err.println("Couldn't initialize the socket.");
-                  e.printStackTrace();
+                  System.out.println("The server you are trying to reach is probably down.");
             } finally {
                   try {
                         TerminateConnection();
@@ -176,40 +168,29 @@ public class Client {
                   System.err.println("Couldn't initialize the socket.");
                   e.printStackTrace();
             } finally {
-                  try {
-                        TerminateConnection();
-                  } catch (IOException e) {
-                        e.getMessage();
-                  }
+                  TerminateConnection();
             }
 
             return this.socket;
       }
 
-      public void TerminateConnection() throws IOException {
+      public void TerminateConnection() {
             try {
                   if (socket != null) {
                         this.socket.close();
                         System.out.println("Closed the client's connection..");
                   } else {
-                        throw new IOException("Socket already closed.");
+                        System.err.println("Socket already closed.");
                   }
             } catch (IOException e) {
-                  e.printStackTrace();
+                  System.err.println("Socket already closed.");
             }
+
+            if (!executor.isShutdown()) executor.shutdown();
       }
 
-      public void TerminateConnectionManually() throws IOException {
-            try {
-                  if (socket != null) {
-                        this.socket.close();
-                        System.out.println("Closed the client's connection..");
-                  } else {
-                        throw new IOException("Socket already closed.");
-                  }
-            } catch (IOException e) {
-                  e.printStackTrace();
-            }
+      public void TerminateConnectionManually() {
+            TerminateConnection();
 
             connected = false;
       }
