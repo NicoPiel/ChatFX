@@ -1,19 +1,20 @@
 package org.nicolos.client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Client {
       static final int port = 45126;
+      final int checkInterval = 500;
       String ipToConnectTo;
       String requestString = "/#req#/";
       boolean connected;
@@ -22,25 +23,29 @@ public class Client {
 
       ArrayList<String> fullChat;
 
+      ExecutorService executor;
       Socket socket;
 
       public Client(String ip) {
+            executor = Executors.newCachedThreadPool();
+
             this.ipToConnectTo = ip;
             fullChat = new ArrayList<>();
 
-            this.socket = RequestConnection(requestString);
+            this.socket = EstablishConnection();
 
-            new Thread(() -> {
+            executor.execute(() -> {
                   while (connected) {
                         connected = PokeServer();
 
                         try {
-                              Thread.sleep(3000);
+                              Thread.sleep(checkInterval);
                         } catch (InterruptedException e) {
                               e.printStackTrace();
                         }
                   }
-            }).start();
+            });
+
       }
 
       boolean PokeServer() {
@@ -56,27 +61,35 @@ public class Client {
                               Scanner in = new Scanner(socket.getInputStream());
                               PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-                              out.println(requestString);
+                              out.println(requestString); // 1
 
                               if (in.hasNext()) {
-                                    int serverChatLength = in.nextInt();
-                                    System.out.println("Server chat length: " + serverChatLength);
+                                    int serverChatLength = in.nextInt(); // 2
+                                    System.out.println("Client: Server chat length: " + serverChatLength);
 
                                     if (currentChatLength < serverChatLength) {
-                                          out.print(true);
+                                          out.println(true); // 3
+                                          System.out.println("Client: needs new chat history.");
 
-                                          while (in.hasNext()) {
-                                                String newChatLine = in.nextLine();
-                                                fullChat.add(newChatLine);
-                                          }
+                                          out.println(currentChatLength); // 4
 
-                                          this.currentChatLength = fullChat.size();
+                                          BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                                          String newChat = input.readLine(); // 5
+                                          System.out.println("Client: Writing to chat history.");
+                                          System.out.println("New chat: " + newChat);
+                                          fullChat.add(newChat);
+
+                                          System.out.println("Client: chat size = " + currentChatLength);
+                                          System.out.println("Client full chat: " + GetFullChatString());
                                     } else if (currentChatLength == serverChatLength) {
                                           out.print(false);
-                                    } else {
-                                          System.out.println("Something went wrong, please try reconnecting.");
-                                          return false;
                                     }
+
+                                    this.currentChatLength = fullChat.size();
+
+                                    in.close();
+                                    out.close();
 
                                     return true;
                               }
@@ -104,8 +117,44 @@ public class Client {
             return false;
       }
 
+      public Socket EstablishConnection() {
+            this.socket = null;
+
+            System.out.println(Thread.currentThread().getName() + ": Establishing connection..");
+
+            try {
+                  this.socket = new Socket(this.ipToConnectTo, port);
+
+                  Scanner in = new Scanner(socket.getInputStream());
+                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+                  out.println("#1" + requestString);
+
+                  if (in.hasNext()) {
+                        this.currentChatLength = in.nextInt();
+                        System.out.println("Client: Server chat length established at " + currentChatLength);
+                  }
+
+                  connected = true;
+                  System.out.println(Thread.currentThread().getName() + ": Connection established.");
+            } catch (UnknownHostException e) {
+                  System.err.println("Couldn't determine the host.");
+                  e.printStackTrace();
+            } catch (IOException e) {
+                  System.err.println("Couldn't initialize the socket.");
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        TerminateConnection();
+                  } catch (IOException e) {
+                        e.getMessage();
+                  }
+            }
+
+            return this.socket;
+      }
+
       public Socket RequestConnection(String message) {
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss z 'on' dd.MM.yyyy");
             this.socket = null;
 
             System.out.println(Thread.currentThread().getName() + ": Requesting connection..");
@@ -115,41 +164,46 @@ public class Client {
                   Scanner in = new Scanner(this.socket.getInputStream());
                   PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
 
-                  String output = String.format("<%s> %s", dateFormat.format(Date.from(Instant.now())), message);
+                  out.println(message);
 
-                  out.println(output);
-
-                  System.out.println(output);
+                  System.out.println(message);
 
                   connected = true;
             } catch (UnknownHostException e) {
                   System.err.println("Couldn't determine the host.");
                   e.printStackTrace();
-                  return null;
             } catch (IOException e) {
                   System.err.println("Couldn't initialize the socket.");
                   e.printStackTrace();
-                  return null;
             } finally {
                   try {
                         TerminateConnection();
                   } catch (IOException e) {
                         e.getMessage();
                   }
-                  catch (IOException e) {
-                        e.getMessage();
-                  }
             }
 
-            return socket;
+            return this.socket;
       }
 
-      public boolean TerminateConnection() throws IOException {
+      public void TerminateConnection() throws IOException {
             try {
                   if (socket != null) {
                         this.socket.close();
                         System.out.println("Closed the client's connection..");
-                        return true;
+                  } else {
+                        throw new IOException("Socket already closed.");
+                  }
+            } catch (IOException e) {
+                  e.printStackTrace();
+            }
+      }
+
+      public void TerminateConnectionManually() throws IOException {
+            try {
+                  if (socket != null) {
+                        this.socket.close();
+                        System.out.println("Closed the client's connection..");
                   } else {
                         throw new IOException("Socket already closed.");
                   }
@@ -157,7 +211,18 @@ public class Client {
                   e.printStackTrace();
             }
 
-            return false;
+            connected = false;
+      }
+
+      public String GetFullChatString() {
+            StringBuilder sb = new StringBuilder();
+
+            for (String s : GetFullChat()) {
+                  sb.append(s);
+                  sb.append(", ");
+            }
+
+            return sb.toString();
       }
 
       public ArrayList<String> GetFullChat() {
@@ -174,5 +239,9 @@ public class Client {
 
       public Socket GetSocket() {
             return this.socket;
+      }
+
+      public int GetInterval() {
+            return this.checkInterval;
       }
 }
