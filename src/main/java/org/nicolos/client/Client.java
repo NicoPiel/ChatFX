@@ -136,6 +136,9 @@ public class Client {
                   } catch (IOException e) {
                         e.getMessage();
                   }
+                  catch (IOException e) {
+                        e.getMessage();
+                  }
             }
 
             return socket;
