@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,8 +38,12 @@ public class Client {
             
             this.socket = EstablishConnection();
             
-            executor.scheduleWithFixedDelay(() -> connected = PokeServer(), 0, 450, TimeUnit.MILLISECONDS);
-            
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                  @Override
+                  public void run() {
+                        connected = PokeServer();
+                  }
+            }, 0, 500);
       }
       
       synchronized boolean PokeServer() {
